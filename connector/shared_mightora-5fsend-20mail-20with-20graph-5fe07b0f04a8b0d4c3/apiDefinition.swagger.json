@@ -1,0 +1,284 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Send email on Exchange using Graph",
+    "description": "Custom connector to send emails using Microsoft Graph API",
+    "version": "1.0"
+  },
+  "host": "graph.microsoft.com",
+  "basePath": "/v1.0",
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/users/{user-email}/sendMail": {
+      "post": {
+        "summary": "Send an email",
+        "x-ms-summary": "Send an email using Microsoft Graph API",
+        "description": "Sends an email from a specified user account",
+        "operationId": "sendMail",
+        "parameters": [
+          {
+            "name": "user-email",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "The email address of the user sending the email",
+            "x-ms-summary": "The email address of the sender",
+            "x-ms-visibility": "important"
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "default": "application/json",
+            "x-ms-summary": "The content type of the request",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "object",
+                  "properties": {
+                    "subject": {
+                      "type": "string",
+                      "x-ms-summary": "Subject",
+                      "x-ms-visibility": "important"
+                    },
+                    "body": {
+                      "type": "object",
+                      "properties": {
+                        "contentType": {
+                          "type": "string",
+                          "enum": [
+                            "Text",
+                            "HTML"
+                          ],
+                          "x-ms-summary": "Body Content Type",
+                          "x-ms-visibility": "important"
+                        },
+                        "content": {
+                          "type": "string",
+                          "format": "html",
+                          "x-ms-summary": "Body Content",
+                          "x-ms-visibility": "important"
+                        }
+                      }
+                    },
+                    "toRecipients": {
+                      "type": "array",
+                      "x-ms-summary": "To Recipient Email Address",
+                      "x-ms-visibility": "important",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "emailAddress": {
+                            "type": "object",
+                            "properties": {
+                              "address": {
+                                "type": "string",
+                                "x-ms-summary": "To Recipient Email Address"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "ccRecipients": {
+                      "type": "array",
+                      "x-ms-visibility": "important",
+                      "x-ms-summary": "CC Recipient Email Address",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "emailAddress": {
+                            "type": "object",
+                            "properties": {
+                              "address": {
+                                "type": "string",
+                                "x-ms-summary": "CC Recipient Email Address"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "bccRecipients": {
+                      "type": "array",
+                      "x-ms-visibility": "important",
+                      "x-ms-summary": "BCC Recipient Email Address",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "emailAddress": {
+                            "type": "object",
+                            "properties": {
+                              "address": {
+                                "type": "string",
+                                "x-ms-summary": "BCC Recipient Email Address"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "attachments": {
+                      "type": "array",
+                      "x-ms-visibility": "important",
+                      "x-ms-summary": "Attachments",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string",
+                            "x-ms-summary": "Attachment Name"
+                          },
+                          "contentBytes": {
+                            "type": "string",
+                            "x-ms-summary": "Attachment Content"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "saveToSentItems": {
+                  "type": "boolean",
+                  "x-ms-summary": "Save to Sent Items",
+                  "x-ms-visibility": "important"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "oauth2-auth": {
+      "type": "oauth2",
+      "flow": "accessCode",
+      "tokenUrl": "https://login.windows.net/common/oauth2/authorize",
+      "scopes": {
+        "mail.send": "mail.send",
+        ".default": ".default"
+      },
+      "authorizationUrl": "https://login.microsoftonline.com/common/oauth2/authorize"
+    },
+    "oAuthClientCredentials": {
+      "type": "oauth2",
+      "flow": "application",
+      "tokenUrl": "https://login.windows.net/common/oauth2/authorize",
+      "scopes": {
+        "mail.send": "mail.send",
+        ".default": ".default"
+      }
+    }
+  },
+  "security": [
+    {
+      "oauth2-auth": [
+        "mail.send",
+        ".default"
+      ]
+    }
+  ],
+  "x-ms-connector-metadata": {
+    "brandColor": "#0078D4",
+    "category": [
+      "Productivity"
+    ],
+    "publisher": "Mightora.io",
+    "stackOwner": "Mightora.io",
+    "tags": [
+      "Microsoft Graph",
+      "Email",
+      "Office 365"
+    ],
+    "visibility": "important",
+    "apiVersion": "1.0",
+    "contact": {
+      "name": "Mightora.io",
+      "url": "https://mightora.io/",
+      "email": "support@mightora.io"
+    },
+    "externalDocs": {
+      "description": "Microsoft Graph API Documentation",
+      "url": "https://docs.microsoft.com/en-us/graph/api/overview"
+    }
+  }
+}
