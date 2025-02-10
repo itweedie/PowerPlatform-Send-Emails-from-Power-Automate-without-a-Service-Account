@@ -1,0 +1,2 @@
+# PowerPlatform-Send-Emails-from-Power-Automate-without-a-Service-Account
+Send Emails from Power Automate without a Service Account
