@@ -14,7 +14,7 @@
     "/users/{user-email}/sendMail": {
       "post": {
         "summary": "Send an email",
-        "x-ms-summary": "Send an email using Microsoft Graph API",
+        "x-ms-summary": "Send email using Graph",
         "description": "Sends an email from a specified user account",
         "operationId": "sendMail",
         "parameters": [
