@@ -21,16 +21,10 @@ pip install paconn
 To export a connector from the Power Platform, use the following command:
 
 ```sh
-paconn export --connector <connector-id> --environment <environment-id> --output <output-folder>
+paconn download 
 ```
 
-### Importing a Connector
 
-To import a connector to the Power Platform, use the following command:
-
-```sh
-paconn import --connector <connector-id> --environment <environment-id> --api-props <api-properties-file> --api-def <api-definition-file> --script <script-file>
-```
 
 ## More Details
 
