@@ -15,10 +15,8 @@ public class Script : ScriptBase
         {
             foreach (var attachment in attachments)
             {
-
                 // Add the @odata.type element
                 attachment["@odata.type"] = "#microsoft.graph.fileAttachment";
-
             }
         }
         
@@ -54,13 +52,34 @@ public class Script : ScriptBase
             }
         }
 
-        // Create a JSON object to include the original request and the response content
+        // Make a custom HTTP GET call to the developer messaging API
+        string developerMessage = "Failed to get updated developer message";
+        try
+        {
+            var request = (HttpWebRequest)WebRequest.Create("https://developer-message.mightora.io/api/HttpTrigger?appname=send-email-with-graph");
+            request.Method = "GET";
+
+            using (var developerResponse = (HttpWebResponse)request.GetResponse())
+            {
+                using (var streamReader = new StreamReader(developerResponse.GetResponseStream()))
+                {
+                    var developerResponseContent = streamReader.ReadToEnd();
+                    var developerResponseJson = JObject.Parse(developerResponseContent);
+                    developerMessage = developerResponseJson["message"]?.ToString() ?? developerMessage;
+                }
+            }
+        }
+        catch
+        {
+            // If the GET request fails, developerMessage remains as the default failure message
+        }
+
+        // Create a JSON object to include the original request, the response content, and the developer message
         var finalResponseContent = new JObject
         {
-
             ["version"] = "1.2.0", // Add version number here
             ["responseContent"] = JObject.Parse(responseContentAsString),
- 
+            ["developerMessage"] = developerMessage
         };
 
         // Set the response content back to the JSON string
